@@ -1,9 +1,6 @@
 ﻿@page "/list"
-@using BlazorStudentApp.Data.Services;
-@using BlazorStudentApp.Data.Models;
-@inject IStudentsService StudentsService
-@inject IJSRuntime JsRuntime
-@inject NavigationManager _navManager
+
+
 
 <PageTitle>Students</PageTitle>
 
@@ -73,34 +70,4 @@ else
     }
 
 }
-@code {
-    private List<Student> students;
-    private Student selectedStudent;
-    bool showModal = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        students = await StudentsService.GetStudentsAsync();
-    }
-
-    protected void DeleteStudentConfirmation(Student student)
-    {
-        selectedStudent = student;
-        showModal = true;
-    }
-
-    protected void EditStudentConfirmationRedirect(Student student)
-    {
-        _navManager.NavigateTo("/edit/"+student.Id, true);
-    }
-
-
-
-    void CancelDelete() => showModal = false;
-    async Task ConfirmDelete()
-    {
-        await StudentsService.DeleteStudentAsync(selectedStudent.Id);
-        students = await StudentsService.GetStudentsAsync();
-        showModal = false;
-    }
-}
