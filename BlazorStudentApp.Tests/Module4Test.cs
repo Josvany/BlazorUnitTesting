@@ -89,16 +89,29 @@ namespace BlazorStudentApp.Tests
             ctx.Services.AddScoped(provider => mockedService.Object);
             var renderedComponent = ctx.RenderComponent<NewStudent>();
 
-
-
             //Act
             renderedComponent.Render();
             renderedComponent.Render();
 
-
             //Assert
             Assert.Equal(3, renderedComponent.RenderCount);
-            
+
+        }
+        [Fact]
+        public void AsyncAwait_Paramerer_IndexComponentTest()
+        {
+            //Arrage
+            string expectedStringValue = "Welcome to Blazor Unit Testing with bUnit";
+            using var ctx = new TestContext();
+            var textService = new TaskCompletionSource<string>();
+            var rC = ctx.RenderComponent<Pages.Index>(p => p.Add(ts => ts.TextService, textService.Task));
+
+            //Act
+            textService.SetResult(expectedStringValue);
+            rC.WaitForState(() => rC.Find("h6").TextContent == expectedStringValue);
+
+            //Assert
+            Assert.Contains(@"<h6>" + expectedStringValue + "</h6>", rC.Markup);
         }
     }
 }
