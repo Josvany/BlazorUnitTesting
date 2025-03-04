@@ -113,5 +113,43 @@ namespace BlazorStudentApp.Tests
             //Assert
             Assert.Contains(@"<h6>" + expectedStringValue + "</h6>", rC.Markup);
         }
+
+        [Fact]
+        public void ElementNotFoundException_Thrown_NewStudentComponent_Test()
+        {
+            //Arrange
+            var student = new Student();
+            var mockedService = new Mock<IStudentsService>();
+            mockedService.Setup(s => s.AddStudentAsync(student)).ReturnsAsync(student);
+
+            using var ctx = new TestContext();
+            ctx.Services.AddScoped(provider => mockedService.Object);
+            var renderedComponent = ctx.RenderComponent<NewStudent>();
+
+            //Act
+            //Assert
+            Assert.Throws<ElementNotFoundException>(() => renderedComponent.Find("button[type=submitdoesnotexist]"));
+        }
+
+        [Fact]
+        public void MissingEventHandlerException_Thrown_NewStudentComponent_Test()
+        {
+            //Arrange
+            var student = new Student();
+            var mockedService = new Mock<IStudentsService>();
+            mockedService.Setup(s => s.AddStudentAsync(student)).ReturnsAsync(student);
+
+            using var ctx = new TestContext();
+            ctx.Services.AddScoped(provider => mockedService.Object);
+            var renderedComponent = ctx.RenderComponent<NewStudent>();
+
+            //Act
+            var h1Element = renderedComponent.Find("h1");
+
+            //Assert
+            Assert.Throws<Bunit.MissingEventHandlerException>(() => h1Element.Click());
+        }
+
+
     }
 }
