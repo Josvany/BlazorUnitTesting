@@ -75,5 +75,30 @@ namespace BlazorStudentApp.Tests
             Assert.True(renderedComponent.Instance.isSuccessMessageVisible);
             Assert.Equal(expectedStudentFullName, renderedComponent.Instance.studentName);
         }
+
+        [Fact]
+        public void Render_NewStudentComponent_Test()
+        {
+            //Arrange
+            var student = new Student();
+
+            var mockedService = new Mock<IStudentsService>();
+            mockedService.Setup(s => s.AddStudentAsync(student)).ReturnsAsync(student);
+
+            using var ctx = new TestContext();
+            ctx.Services.AddScoped(provider => mockedService.Object);
+            var renderedComponent = ctx.RenderComponent<NewStudent>();
+
+
+
+            //Act
+            renderedComponent.Render();
+            renderedComponent.Render();
+
+
+            //Assert
+            Assert.Equal(3, renderedComponent.RenderCount);
+            
+        }
     }
 }
